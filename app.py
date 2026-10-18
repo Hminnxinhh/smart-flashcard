@@ -22,82 +22,83 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Flashcard - GenZ IELTS Pro 🚀</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <title>Smart Flashcard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6366F1;
-            --primary-hover: #4F46E5;
-            --accent: #EC4899;
-            --bg-gradient: linear-gradient(135deg, #0EA5E9 0%, #6366F1 50%, #A855F7 100%);
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --accent: #F43F5E;
         }
 
         * { box-sizing: border-box; }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg-gradient);
+            background-color: #0F172A;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.35) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.3) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(56, 189, 248, 0.25) 0px, transparent 50%);
             min-height: 100vh;
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 16px;
+            padding: 20px;
         }
 
         .card-container {
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(16px);
-            border-radius: 28px;
-            padding: 28px 24px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 32px;
+            padding: 32px 28px;
             width: 100%;
-            max-width: 440px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-width: 450px;
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.3);
             text-align: center;
         }
 
         .header-title {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 800;
-            background: linear-gradient(90deg, #6366F1, #EC4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0 0 4px 0;
-        }
-
-        .header-sub {
-            font-size: 13px;
-            color: #64748B;
-            font-weight: 700;
-            margin-bottom: 20px;
+            color: #0F172A;
+            margin: 0 0 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            letter-spacing: -0.5px;
         }
 
         select, input {
             width: 100%;
-            padding: 12px 16px;
-            border-radius: 14px;
-            border: 2px solid #E2E8F0;
+            padding: 13px 18px;
+            border-radius: 16px;
+            border: 1.5px solid #E2E8F0;
             font-size: 14px;
             font-family: inherit;
-            font-weight: 700;
+            font-weight: 600;
             outline: none;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
             margin-bottom: 12px;
-            background: #F8FAFC;
+            background: #FFFFFF;
+            color: #1E293B;
         }
 
         select:focus, input:focus {
             border-color: var(--primary);
-            background: #FFF;
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
         }
 
         /* Flashcard 3D Flip */
         .scene {
             width: 100%;
-            height: 220px;
+            height: 230px;
             perspective: 1000px;
-            margin: 16px 0;
+            margin: 18px 0;
             cursor: pointer;
         }
 
@@ -106,7 +107,7 @@ HTML_TEMPLATE = """
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .card-flip.is-flipped {
@@ -118,14 +119,14 @@ HTML_TEMPLATE = """
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 24px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border: 2px solid #EEF2FF;
-            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.06);
         }
 
         .card-front {
@@ -133,33 +134,34 @@ HTML_TEMPLATE = """
         }
 
         .card-back {
-            background: linear-gradient(135deg, #EEF2FF 0%, #F5F3FF 100%);
+            background: linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 100%);
             transform: rotateY(180deg);
             border-color: #C7D2FE;
         }
 
         .word-title {
-            font-size: 32px;
+            font-size: 34px;
             font-weight: 800;
             color: #0F172A;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
 
         .badge-pos {
             background: #EEF2FF;
-            color: #4F46E5;
+            color: var(--primary);
             font-size: 11px;
             font-weight: 800;
-            padding: 4px 12px;
+            padding: 5px 14px;
             border-radius: 20px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
         }
 
         .word-meaning {
-            font-size: 24px;
+            font-size: 25px;
             font-weight: 800;
-            color: #059669;
+            color: #10B981;
             margin-bottom: 8px;
         }
 
@@ -176,20 +178,23 @@ HTML_TEMPLATE = """
             border-radius: 50%;
             width: 44px;
             height: 44px;
-            font-size: 20px;
+            font-size: 18px;
             cursor: pointer;
-            margin-top: 12px;
+            margin-top: 14px;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-audio:hover {
             background: #E2E8F0;
-            transform: scale(1.1);
+            transform: scale(1.08);
         }
 
         .progress-bar {
-            height: 8px;
-            background: #F1F5F9;
+            height: 6px;
+            background: #E2E8F0;
             border-radius: 10px;
             overflow: hidden;
             margin-bottom: 8px;
@@ -197,7 +202,7 @@ HTML_TEMPLATE = """
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #EC4899, #8B5CF6);
+            background: linear-gradient(90deg, #6366F1, #EC4899);
             width: 0%;
             transition: width 0.3s;
         }
@@ -205,39 +210,38 @@ HTML_TEMPLATE = """
         .controls {
             display: flex;
             gap: 12px;
-            margin-top: 16px;
+            margin-top: 18px;
         }
 
         .btn {
             flex: 1;
             padding: 14px;
             border: none;
-            border-radius: 14px;
+            border-radius: 16px;
             font-size: 15px;
-            font-weight: 800;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             font-family: inherit;
         }
 
-        .btn-prev { background: #F1F5F9; color: #334155; }
+        .btn-prev { background: #F1F5F9; color: #475569; }
         .btn-prev:hover { background: #E2E8F0; }
 
         .btn-next {
             background: var(--primary);
             color: white;
-            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
         }
         .btn-next:hover {
             background: var(--primary-hover);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
     </style>
 </head>
 <body>
     <div class="card-container">
         <h1 class="header-title">⚡ Smart Flashcard</h1>
-        <div class="header-sub">IELTS Band 2.5 ➔ 6.5 GenZ Edition 🔥</div>
 
         <select id="categorySelect" onchange="changeCategory()">
             {% for cat in categories %}
@@ -266,7 +270,7 @@ HTML_TEMPLATE = """
                 </div>
             </div>
         </div>
-        <p style="font-size: 11px; color: #94A3B8; margin-top: -6px;">✨ Bấm vào thẻ để xoay lật mặt sau</p>
+        <p style="font-size: 11px; color: #64748B; margin-top: -6px; font-weight: 600;">✨ Bấm vào thẻ để xoay lật mặt sau</p>
 
         <div class="controls">
             <button class="btn btn-prev" onclick="prevCard()">⬅️ Trước</button>
