@@ -1,20 +1,368 @@
 {
   "IELTS Band 2.5 - 3.5 (Cơ bản)": [
-    {"front": "Improve", "back": "Cải thiện, nâng cao", "pos": "verb", "example": "I want to improve my English speaking skills."},
-    {"front": "Common", "back": "Phổ biến, thông dụng", "pos": "adj", "example": "It is a common mistake among learners."},
-    {"front": "Describe", "back": "Mô tả, miêu tả", "pos": "verb", "example": "Can you describe your hometown?"},
-    {"front": "Environment", "back": "Môi trường", "pos": "noun", "example": "We should protect our natural environment."}
+    {
+      "front": "Improve",
+      "back": "Cải thiện, nâng cao",
+      "pos": "verb",
+      "example": "I want to improve my English speaking skills."
+    },
+    {
+      "front": "Common",
+      "back": "Phổ biến, thông dụng",
+      "pos": "adj",
+      "example": "It is a common mistake among language learners."
+    },
+    {
+      "front": "Describe",
+      "back": "Mô tả, miêu tả",
+      "pos": "verb",
+      "example": "Can you describe your hometown in detail?"
+    },
+    {
+      "front": "Environment",
+      "back": "Môi trường",
+      "pos": "noun",
+      "example": "We should protect our natural environment."
+    },
+    {
+      "front": "Benefit",
+      "back": "Lợi ích, ưu điểm",
+      "pos": "noun",
+      "example": "Regular exercise brings many health benefits."
+    },
+    {
+      "front": "Habit",
+      "back": "Thói quen",
+      "pos": "noun",
+      "example": "Reading daily is a very good habit."
+    },
+    {
+      "front": "Hometown",
+      "back": "Quê hương",
+      "pos": "noun",
+      "example": "My hometown is famous for beautiful beaches."
+    },
+    {
+      "front": "Popular",
+      "back": "Được yêu thích, phổ biến",
+      "pos": "adj",
+      "example": "Football is the most popular sport here."
+    },
+    {
+      "front": "Reduce",
+      "back": "Giảm bớt, thu nhỏ",
+      "pos": "verb",
+      "example": "We need to reduce plastic usage."
+    },
+    {
+      "front": "Support",
+      "back": "Ủng hộ, hỗ trợ",
+      "pos": "verb",
+      "example": "My family always supports my dreams."
+    },
+    {
+      "front": "Achieve",
+      "back": "Đạt được, thành công",
+      "pos": "verb",
+      "example": "She worked hard to achieve her goals."
+    },
+    {
+      "front": "Activity",
+      "back": "Hoạt động",
+      "pos": "noun",
+      "example": "Outdoor activities are good for health."
+    },
+    {
+      "front": "Advise",
+      "back": "Khuyên bảo, tư vấn",
+      "pos": "verb",
+      "example": "Doctors advise drinking plenty of water."
+    },
+    {
+      "front": "Agree",
+      "back": "Đồng ý, tán thành",
+      "pos": "verb",
+      "example": "I completely agree with your opinion."
+    },
+    {
+      "front": "Allow",
+      "back": "Cho phép",
+      "pos": "verb",
+      "example": "Pets are not allowed in this building."
+    },
+    {
+      "front": "Amount",
+      "back": "Số lượng, lượng",
+      "pos": "noun",
+      "example": "A large amount of money was spent."
+    },
+    {
+      "front": "Anxious",
+      "back": "Lo âu, trăn trở",
+      "pos": "adj",
+      "example": "He felt anxious before the examination."
+    },
+    {
+      "front": "Attend",
+      "back": "Tham dự, tham gia",
+      "pos": "verb",
+      "example": "Many people attended the workshop."
+    },
+    {
+      "front": "Attract",
+      "back": "Thu hút, hấp dẫn",
+      "pos": "verb",
+      "example": "The city attracts millions of tourists."
+    },
+    {
+      "front": "Avoid",
+      "back": "Tránh, né tránh",
+      "pos": "verb",
+      "example": "You should avoid eating fast food."
+    }
   ],
   "IELTS Band 4.0 - 5.0 (Trung cấp)": [
-    {"front": "Benefit", "back": "Lợi ích, ưu điểm", "pos": "noun", "example": "Exercise brings many health benefits."},
-    {"front": "Challenge", "back": "Thử thách, khó khăn", "pos": "noun", "example": "Learning a new language is a great challenge."},
-    {"front": "Encourage", "back": "Khuyến khích, động viên", "pos": "verb", "example": "Teachers encourage students to ask questions."},
-    {"front": "Opportunity", "back": "Cơ hội, thời cơ", "pos": "noun", "example": "This job is a great career opportunity."}
+    {
+      "front": "Challenge",
+      "back": "Thử thách, khó khăn",
+      "pos": "noun",
+      "example": "Learning a new language is a great challenge."
+    },
+    {
+      "front": "Encourage",
+      "back": "Khuyến khích, động viên",
+      "pos": "verb",
+      "example": "Teachers encourage students to ask questions."
+    },
+    {
+      "front": "Opportunity",
+      "back": "Cơ hội, thời cơ",
+      "pos": "noun",
+      "example": "This job is a great career opportunity."
+    },
+    {
+      "front": "Convenient",
+      "back": "Tiện lợi, thuận tiện",
+      "pos": "adj",
+      "example": "Online shopping is extremely convenient."
+    },
+    {
+      "front": "Develop",
+      "back": "Phát triển",
+      "pos": "verb",
+      "example": "Playing games helps develop critical thinking."
+    },
+    {
+      "front": "Efficient",
+      "back": "Hiệu quả, năng suất",
+      "pos": "adj",
+      "example": "Public transport is an efficient way to travel."
+    },
+    {
+      "front": "Impact",
+      "back": "Tác động, ảnh hưởng",
+      "pos": "noun",
+      "example": "Technology has a huge impact on our lives."
+    },
+    {
+      "front": "Provide",
+      "back": "Cung cấp",
+      "pos": "verb",
+      "example": "The school provides free books for students."
+    },
+    {
+      "front": "Solution",
+      "back": "Giải pháp",
+      "pos": "noun",
+      "example": "We need to find a solution to traffic pollution."
+    },
+    {
+      "front": "Traditional",
+      "back": "Truyền thống",
+      "pos": "adj",
+      "example": "Ao Dai is the traditional costume of Vietnam."
+    },
+    {
+      "front": "Accurate",
+      "back": "Chính xác, chuẩn xác",
+      "pos": "adj",
+      "example": "The weather forecast was surprisingly accurate."
+    },
+    {
+      "front": "Adapt",
+      "back": "Thích nghi, thích ứng",
+      "pos": "verb",
+      "example": "It takes time to adapt to a new climate."
+    },
+    {
+      "front": "Analyze",
+      "back": "Phân tích",
+      "pos": "verb",
+      "example": "Researchers need to analyze the survey data."
+    },
+    {
+      "front": "Approach",
+      "back": "Phương pháp, tiếp cận",
+      "pos": "noun",
+      "example": "We need a fresh approach to solve this problem."
+    },
+    {
+      "front": "Attitude",
+      "back": "Thái độ, quan điểm",
+      "pos": "noun",
+      "example": "A positive attitude leads to success."
+    },
+    {
+      "front": "Authority",
+      "back": "Chính quyền, cơ quan có thẩm quyền",
+      "pos": "noun",
+      "example": "Local authorities are improving roads."
+    },
+    {
+      "front": "Awareness",
+      "back": "Nhận thức, hiểu biết",
+      "pos": "noun",
+      "example": "We need to raise public awareness about health."
+    },
+    {
+      "front": "Community",
+      "back": "Cộng đồng",
+      "pos": "noun",
+      "example": "He active in supporting the local community."
+    },
+    {
+      "front": "Complex",
+      "back": "Phức tạp, rắc rối",
+      "pos": "adj",
+      "example": "The situation is far more complex than expected."
+    },
+    {
+      "front": "Consequence",
+      "back": "Hậu quả, kết quả",
+      "pos": "noun",
+      "example": "Failure to plan can have serious consequences."
+    }
   ],
   "IELTS Band 5.5 - 6.5 (Khá/Tốt)": [
-    {"front": "Substantial", "back": "Đáng kể, quan trọng", "pos": "adj", "example": "There has been a substantial increase in sales."},
-    {"front": "Implement", "back": "Thực thi, áp dụng", "pos": "verb", "example": "The government plans to implement new policies."},
-    {"front": "Predominantly", "back": "Phần lớn, chủ yếu", "pos": "adv", "example": "The area is predominantly residential."},
-    {"front": "Crucial", "back": "Cốt yếu, rất quan trọng", "pos": "adj", "example": "Water is crucial for human survival."}
+    {
+      "front": "Substantial",
+      "back": "Đáng kể, quan trọng",
+      "pos": "adj",
+      "example": "There has been a substantial increase in sales."
+    },
+    {
+      "front": "Implement",
+      "back": "Thực thi, áp dụng",
+      "pos": "verb",
+      "example": "The government plans to implement new policies."
+    },
+    {
+      "front": "Predominantly",
+      "back": "Phần lớn, chủ yếu",
+      "pos": "adv",
+      "example": "The area is predominantly residential."
+    },
+    {
+      "front": "Crucial",
+      "back": "Cốt yếu, rất quan trọng",
+      "pos": "adj",
+      "example": "Water is crucial for human survival."
+    },
+    {
+      "front": "Contribute",
+      "back": "Đóng góp, góp phần",
+      "pos": "verb",
+      "example": "Volunteering contributes to local community development."
+    },
+    {
+      "front": "Detrimental",
+      "back": "Gây hại, bất lợi",
+      "pos": "adj",
+      "example": "Smoking has a detrimental effect on health."
+    },
+    {
+      "front": "Facilitate",
+      "back": "Tạo điều kiện, làm cho dễ dàng",
+      "pos": "verb",
+      "example": "Modern tools facilitate remote learning."
+    },
+    {
+      "front": "Inevitable",
+      "back": "Không thể tránh khỏi",
+      "pos": "adj",
+      "example": "Change is an inevitable part of modern life."
+    },
+    {
+      "front": "Mitigate",
+      "back": "Giảm nhẹ, xoa dịu",
+      "pos": "verb",
+      "example": "Planting trees helps mitigate climate change."
+    },
+    {
+      "front": "Perspective",
+      "back": "Góc nhìn, quan điểm",
+      "pos": "noun",
+      "example": "Travel broadens your perspective on the world."
+    },
+    {
+      "front": "Accommodate",
+      "back": "Đáp ứng, cung cấp chỗ ở",
+      "pos": "verb",
+      "example": "The hotel can accommodate up to 500 guests."
+    },
+    {
+      "front": "Accumulate",
+      "back": "Tích lũy, gom góp",
+      "pos": "verb",
+      "example": "Knowledge accumulates over time."
+    },
+    {
+      "front": "Advocate",
+      "back": "Ủng hộ, biện hộ",
+      "pos": "verb",
+      "example": "Many experts advocate renewable energy."
+    },
+    {
+      "front": "Comprehensive",
+      "back": "Toàn diện, bao quát",
+      "pos": "adj",
+      "example": "The report offers a comprehensive analysis."
+    },
+    {
+      "front": "Considerable",
+      "back": "Đáng kể, to lớn",
+      "pos": "adj",
+      "example": "They spent a considerable amount of time testing."
+    },
+    {
+      "front": "Demonstrate",
+      "back": "Chứng minh, thể hiện",
+      "pos": "verb",
+      "example": "The results demonstrate the effectiveness."
+    },
+    {
+      "front": "Differentiate",
+      "back": "Phân biệt",
+      "pos": "verb",
+      "example": "It is important to differentiate facts from opinions."
+    },
+    {
+      "front": "Establish",
+      "back": "Thành lập, thiết lập",
+      "pos": "verb",
+      "example": "The company was established in 2010."
+    },
+    {
+      "front": "Fundamental",
+      "back": "Cơ bản, cốt lõi",
+      "pos": "adj",
+      "example": "Freedom of speech is a fundamental right."
+    },
+    {
+      "front": "Prevalent",
+      "back": "Thường thấy, phổ biến rộng rãi",
+      "pos": "adj",
+      "example": "This view is prevalent among young professionals."
+    }
   ]
 }

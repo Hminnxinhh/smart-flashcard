@@ -1,6 +1,6 @@
 import json
 import os
-from flask import Flask, render_template_string, request
+from flask import Flask, render_template_string
 
 app = Flask(__name__)
 DATA_FILE = "flashcards_data.json"
@@ -22,15 +22,17 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Flashcard - IELTS GenZ Edition 🚀</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>Smart Flashcard - GenZ IELTS Pro 🚀</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #6EE7B7 0%, #3B82F6 50%, #9333EA 100%);
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --primary-color: #4F46E5;
-            --accent-color: #EC4899;
+            --primary: #6366F1;
+            --primary-hover: #4F46E5;
+            --accent: #EC4899;
+            --bg-gradient: linear-gradient(135deg, #0EA5E9 0%, #6366F1 50%, #A855F7 100%);
         }
+
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -40,111 +42,157 @@ HTML_TEMPLATE = """
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
+            padding: 16px;
         }
 
-        .container {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 32px;
+        .card-container {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(16px);
+            border-radius: 28px;
+            padding: 28px 24px;
             width: 100%;
-            max-width: 480px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            max-width: 440px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             text-align: center;
         }
 
-        .logo { font-size: 28px; font-weight: 800; color: #1E293B; margin-bottom: 4px; }
-        .tagline { font-size: 14px; color: #64748B; margin-bottom: 24px; font-weight: 600; }
+        .header-title {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #6366F1, #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0 0 4px 0;
+        }
+
+        .header-sub {
+            font-size: 13px;
+            color: #64748B;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
 
         select, input {
             width: 100%;
             padding: 12px 16px;
-            border-radius: 12px;
+            border-radius: 14px;
             border: 2px solid #E2E8F0;
             font-size: 14px;
             font-family: inherit;
-            font-weight: 600;
-            margin-bottom: 16px;
-            box-sizing: border-box;
+            font-weight: 700;
             outline: none;
             transition: all 0.2s;
+            margin-bottom: 12px;
+            background: #F8FAFC;
         }
 
-        select:focus, input:focus { border-color: var(--primary-color); }
+        select:focus, input:focus {
+            border-color: var(--primary);
+            background: #FFF;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
 
-        /* Style Flashcard */
-        .card-wrapper {
+        /* Flashcard 3D Flip */
+        .scene {
+            width: 100%;
+            height: 220px;
             perspective: 1000px;
-            margin: 20px 0;
+            margin: 16px 0;
+            cursor: pointer;
         }
 
-        .flashcard {
-            background: #FFFFFF;
+        .card-flip {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+        }
+
+        .card-flip.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
             border-radius: 20px;
-            padding: 30px 20px;
-            min-height: 180px;
-            border: 3px solid #F1F5F9;
-            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.08);
+            padding: 24px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            position: relative;
+            border: 2px solid #EEF2FF;
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.1);
         }
 
-        .flashcard:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 30px rgba(79, 70, 229, 0.15);
+        .card-front {
+            background: #FFFFFF;
         }
 
-        .word-front { font-size: 32px; font-weight: 800; color: #0F172A; }
-        .word-pos { font-size: 12px; font-weight: 700; color: #6366F1; text-transform: uppercase; background: #EEF2FF; padding: 4px 10px; border-radius: 20px; margin-top: 8px; }
-        .word-back { font-size: 26px; font-weight: 700; color: #059669; margin-top: 8px; }
-        .word-example { font-size: 13px; color: #475569; font-style: italic; margin-top: 12px; line-height: 1.4; }
+        .card-back {
+            background: linear-gradient(135deg, #EEF2FF 0%, #F5F3FF 100%);
+            transform: rotateY(180deg);
+            border-color: #C7D2FE;
+        }
 
-        .audio-btn {
-            background: #F3F4F6;
+        .word-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #0F172A;
+            margin-bottom: 6px;
+        }
+
+        .badge-pos {
+            background: #EEF2FF;
+            color: #4F46E5;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .word-meaning {
+            font-size: 24px;
+            font-weight: 800;
+            color: #059669;
+            margin-bottom: 8px;
+        }
+
+        .word-example {
+            font-size: 13px;
+            color: #475569;
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        .btn-audio {
+            background: #F1F5F9;
             border: none;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 18px;
+            width: 44px;
+            height: 44px;
+            font-size: 20px;
             cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.2s;
-        }
-        .audio-btn:hover { background: #E5E7EB; }
-
-        .btn-group { display: flex; gap: 12px; margin-top: 20px; }
-        
-        .btn {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            border-radius: 14px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
+            margin-top: 12px;
             transition: all 0.2s;
-            font-family: inherit;
         }
 
-        .btn-primary { background: var(--primary-color); color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
-        .btn-primary:hover { opacity: 0.9; transform: scale(1.02); }
-
-        .btn-secondary { background: #F1F5F9; color: #334155; }
-        .btn-secondary:hover { background: #E2E8F0; }
+        .btn-audio:hover {
+            background: #E2E8F0;
+            transform: scale(1.1);
+        }
 
         .progress-bar {
             height: 8px;
-            background: #E2E8F0;
+            background: #F1F5F9;
             border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .progress-fill {
@@ -154,52 +202,75 @@ HTML_TEMPLATE = """
             transition: width 0.3s;
         }
 
-        .hidden { display: none !important; }
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-prev { background: #F1F5F9; color: #334155; }
+        .btn-prev:hover { background: #E2E8F0; }
+
+        .btn-next {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+        }
+        .btn-next:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">⚡ Smart Flashcard</div>
-        <div class="tagline">Bứt phá IELTS Band từ 2.5 ➔ 6.5 🔥</div>
+    <div class="card-container">
+        <h1 class="header-title">⚡ Smart Flashcard</h1>
+        <div class="header-sub">IELTS Band 2.5 ➔ 6.5 GenZ Edition 🔥</div>
 
-        <!-- Chọn danh mục -->
         <select id="categorySelect" onchange="changeCategory()">
             {% for cat in categories %}
             <option value="{{ cat }}">{{ cat }}</option>
             {% endfor %}
         </select>
 
-        <!-- Thanh tìm kiếm -->
-        <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm từ vựng nhanh..." onkeyup="filterCards()">
+        <input type="text" id="searchInput" placeholder="🔍 Tìm nhanh từ vựng..." onkeyup="filterCards()">
 
-        <!-- Tiến trình -->
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
         </div>
         <div id="cardCounter" style="font-size: 12px; font-weight: 700; color: #64748B;">Thẻ 1 / 1</div>
 
-        <!-- Khung Flashcard -->
-        <div class="card-wrapper">
-            <div class="flashcard" onclick="flipCard()">
-                <div id="cardFront">
-                    <div class="word-front" id="wordFront">Loading...</div>
-                    <span class="word-pos" id="wordPos">verb</span>
-                    <div>
-                        <button class="audio-btn" onclick="event.stopPropagation(); speakWord()">🔊</button>
-                    </div>
+        <!-- Khung 3D Flip -->
+        <div class="scene" onclick="flipCard()">
+            <div class="card-flip" id="cardFlip">
+                <div class="card-face card-front">
+                    <div class="word-title" id="wordFront">Loading...</div>
+                    <span class="badge-pos" id="wordPos">verb</span>
+                    <button class="btn-audio" onclick="event.stopPropagation(); speakWord()">🔊</button>
                 </div>
-                <div id="cardBack" class="hidden">
-                    <div class="word-back" id="wordBack">Nghĩa tiếng Việt</div>
+                <div class="card-face card-back">
+                    <div class="word-meaning" id="wordBack">Nghĩa tiếng Việt</div>
                     <div class="word-example" id="wordExample">Ví dụ...</div>
                 </div>
             </div>
         </div>
-        <p style="font-size: 12px; color: #94A3B8; margin-top: -10px;">(Chạm vào thẻ để lật xem nghĩa ✨)</p>
+        <p style="font-size: 11px; color: #94A3B8; margin-top: -6px;">✨ Bấm vào thẻ để xoay lật mặt sau</p>
 
-        <!-- Điều hướng -->
-        <div class="btn-group">
-            <button class="btn btn-secondary" onclick="prevCard()">⬅️ Trước</button>
-            <button class="btn btn-primary" onclick="nextCard()">Tiếp theo 🚀</button>
+        <div class="controls">
+            <button class="btn btn-prev" onclick="prevCard()">⬅️ Trước</button>
+            <button class="btn btn-next" onclick="nextCard()">Tiếp theo 🚀</button>
         </div>
     </div>
 
@@ -208,7 +279,6 @@ HTML_TEMPLATE = """
         let currentCategory = Object.keys(allData)[0] || "";
         let currentCards = [];
         let currentIndex = 0;
-        let isFront = true;
 
         function loadCategoryCards() {
             const searchVal = document.getElementById("searchInput").value.toLowerCase().trim();
@@ -223,10 +293,13 @@ HTML_TEMPLATE = """
         }
 
         function renderCard() {
+            const cardFlip = document.getElementById("cardFlip");
+            cardFlip.classList.remove("is-flipped");
+
             if (currentCards.length === 0) {
-                document.getElementById("wordFront").innerText = "Không tìm thấy từ!";
+                document.getElementById("wordFront").innerText = "Không tìm thấy!";
                 document.getElementById("wordPos").innerText = "N/A";
-                document.getElementById("wordBack").innerText = "Vui lòng nhập từ khác";
+                document.getElementById("wordBack").innerText = "Hãy nhập từ khác";
                 document.getElementById("wordExample").innerText = "";
                 document.getElementById("cardCounter").innerText = "0 / 0";
                 document.getElementById("progressFill").style.width = "0%";
@@ -236,30 +309,17 @@ HTML_TEMPLATE = """
             const card = currentCards[currentIndex];
             document.getElementById("wordFront").innerText = card.front;
             document.getElementById("wordPos").innerText = card.pos || "vocab";
-            document.getElementById("wordBack").innerText = "💡 " + card.back;
+            document.getElementById("wordBack").innerText = card.back;
             document.getElementById("wordExample").innerText = card.example ? `"${card.example}"` : "";
 
-            // Cập nhật tiến trình
             const progress = ((currentIndex + 1) / currentCards.length) * 100;
             document.getElementById("progressFill").style.width = progress + "%";
             document.getElementById("cardCounter").innerText = `Thẻ ${currentIndex + 1} / ${currentCards.length}`;
-
-            // Reset mặt thẻ
-            isFront = true;
-            document.getElementById("cardFront").classList.remove("hidden");
-            document.getElementById("cardBack").classList.add("hidden");
         }
 
         function flipCard() {
             if (currentCards.length === 0) return;
-            isFront = !isFront;
-            if (isFront) {
-                document.getElementById("cardFront").classList.remove("hidden");
-                document.getElementById("cardBack").classList.add("hidden");
-            } else {
-                document.getElementById("cardFront").classList.add("hidden");
-                document.getElementById("cardBack").classList.remove("hidden");
-            }
+            document.getElementById("cardFlip").classList.toggle("is-flipped");
         }
 
         function nextCard() {
@@ -291,7 +351,6 @@ HTML_TEMPLATE = """
             window.speechSynthesis.speak(utterance);
         }
 
-        // Khởi chạy ban đầu
         loadCategoryCards();
     </script>
 </body>
