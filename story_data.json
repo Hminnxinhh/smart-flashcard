@@ -1,0 +1,30 @@
+{
+  "chapter_info": {
+    "title": "Vụ Án 01: Căn Phòng Khóa Cấm",
+    "description": "Nhà sáng chế Alex đã biến mất. Hãy tìm kiếm các manh mối trong căn phòng để tìm ra mật mã máy tính và vạch mặt kẻ đứng sau."
+  },
+  "suspects": [
+    {"id": "A", "name": "Marcus (Đối thủ kinh doanh)", "desc": "Có tranh chấp bản quyền phần mềm với Alex."},
+    {"id": "B", "name": "Elena (Trợ lý cá nhân)", "desc": "Người cuối cùng nhìn thấy Alex trước khi phòng bị khóa."},
+    {"id": "C", "name": "David (Bảo vệ tòa nhà)", "desc": "Khai rằng không thấy ai ra vào tầng 4 suốt đêm."}
+  ],
+  "puzzles": {
+    "puzzle_1": {
+      "title": "Thử thách 1: Mật mã điện thoại",
+      "hint_text": "Manh mối: Lật mở cuốn sổ tay trên bàn có ghi dòng chữ: 'Ngày sinh của người bạn thân nhất (Đảo ngược năm-tháng)'. Tờ lịch tường đánh dấu tháng 11 năm 2024.",
+      "answer": "2411",
+      "success_msg": "🔓 Mở khóa điện thoại thành công! Bạn đọc được tin nhắn đe dọa từ một số ẩn danh."
+    },
+    "puzzle_2": {
+      "title": "Thử thách 2: Giải mã File Tài Liệu Mật",
+      "hint_text": "Manh mối: Trong tin nhắn điện thoại nhắc đến cụm từ khóa: 'Giao dịch lúc RẠNG ĐÔNG'. Nhập từ khóa tiếng Anh tương ứng (4 ký tự).",
+      "answer": "DAWN",
+      "success_msg": "📂 Bạn đã mở được file hợp đồng chuyển nhượng ngầm!"
+    },
+    "puzzle_3": {
+      "title": "Thử thách 3: Chỉ danh Thủ phạm",
+      "answer": "B",
+      "success_msg": "🏆 BẮT CHÍNH XÁC THỦ PHẠM! Elena đã giả mạo chữ ký và dàn dựng vụ mất tích để chiếm đoạt bản quyền!"
+    }
+  }
+}
