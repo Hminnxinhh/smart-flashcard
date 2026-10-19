@@ -37,7 +37,13 @@ HTML_TEMPLATE = """
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #090D16;
+            background: #0B0F19;
+            /* GenZ Vibrant Mesh Gradient Background */
+            background-image: 
+                radial-gradient(at 10% 20%, rgba(99, 102, 241, 0.5) 0px, transparent 50%),
+                radial-gradient(at 90% 10%, rgba(236, 72, 153, 0.45) 0px, transparent 50%),
+                radial-gradient(at 50% 90%, rgba(14, 165, 233, 0.4) 0px, transparent 50%),
+                radial-gradient(at 80% 80%, rgba(168, 85, 247, 0.4) 0px, transparent 50%);
             color: #F8FAFC;
             min-height: 100vh;
             margin: 0;
@@ -46,103 +52,73 @@ HTML_TEMPLATE = """
             align-items: center;
             padding: 20px;
             overflow-x: hidden;
-            position: relative;
-        }
-
-        .bg-glow-1 {
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, rgba(0,0,0,0) 70%);
-            top: -100px;
-            left: -100px;
-            border-radius: 50%;
-            filter: blur(60px);
-            animation: floatGlow 10s infinite alternate ease-in-out;
-        }
-
-        .bg-glow-2 {
-            position: absolute;
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, rgba(236, 72, 153, 0.35) 0%, rgba(0,0,0,0) 70%);
-            bottom: -100px;
-            right: -100px;
-            border-radius: 50%;
-            filter: blur(60px);
-            animation: floatGlow 12s infinite alternate ease-in-out reverse;
-        }
-
-        @keyframes floatGlow {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(60px, 60px) scale(1.15); }
         }
 
         .main-container {
             position: relative;
             z-index: 10;
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 32px;
+            background: rgba(15, 23, 42, 0.78);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 36px;
             padding: 32px 28px;
             width: 100%;
             max-width: 480px;
-            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 35px 70px -15px rgba(0, 0, 0, 0.7);
             text-align: center;
         }
 
         .nav-tabs {
             display: flex;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 4px;
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 5px;
+            border-radius: 18px;
             margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .tab-btn {
             flex: 1;
-            padding: 10px;
+            padding: 11px;
             border: none;
             background: transparent;
             color: #94A3B8;
             font-size: 13px;
             font-weight: 700;
-            border-radius: 12px;
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s;
             font-family: inherit;
         }
 
         .tab-btn.active {
-            background: var(--primary);
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
             color: #FFFFFF;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
         }
 
         select, input {
             width: 100%;
-            padding: 12px 16px;
-            border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 13px 18px;
+            border-radius: 16px;
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
             font-size: 14px;
             font-family: inherit;
             font-weight: 600;
             outline: none;
             transition: all 0.2s;
-            margin-bottom: 12px;
-            background: rgba(255, 255, 255, 0.06);
+            margin-bottom: 14px;
+            background: rgba(255, 255, 255, 0.07);
             color: #F8FAFC;
         }
 
         select option { background: #0F172A; color: #FFF; }
 
         select:focus, input:focus {
-            border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+            border-color: #818CF8;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.3);
         }
 
         .scene {
@@ -168,27 +144,27 @@ HTML_TEMPLATE = """
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            border-radius: 24px;
+            border-radius: 26px;
             padding: 24px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
 
         .card-front {
-            background: linear-gradient(145deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
         }
 
         .card-back {
-            background: linear-gradient(145deg, rgba(49, 46, 129, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+            background: linear-gradient(145deg, rgba(49, 46, 129, 0.9) 0%, rgba(30, 27, 75, 0.95) 100%);
             transform: rotateY(180deg);
         }
 
         .word-title {
-            font-size: 32px;
+            font-size: 34px;
             font-weight: 800;
             color: #FFFFFF;
             margin-bottom: 2px;
@@ -203,8 +179,8 @@ HTML_TEMPLATE = """
         }
 
         .badge-pos {
-            background: rgba(99, 102, 241, 0.2);
-            color: #818CF8;
+            background: rgba(99, 102, 241, 0.25);
+            color: #A5B4FC;
             border: 1px solid rgba(99, 102, 241, 0.4);
             font-size: 11px;
             font-weight: 800;
@@ -235,7 +211,7 @@ HTML_TEMPLATE = """
 
         .icon-btn {
             background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             width: 44px;
             height: 44px;
@@ -249,7 +225,7 @@ HTML_TEMPLATE = """
         }
 
         .icon-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
             transform: scale(1.1);
         }
 
@@ -274,9 +250,9 @@ HTML_TEMPLATE = """
 
         .btn {
             flex: 1;
-            padding: 13px;
+            padding: 14px;
             border: none;
-            border-radius: 14px;
+            border-radius: 16px;
             font-size: 14px;
             font-weight: 800;
             cursor: pointer;
@@ -285,24 +261,24 @@ HTML_TEMPLATE = """
         }
 
         .btn-prev { background: rgba(255, 255, 255, 0.08); color: #CBD5E1; }
-        .btn-prev:hover { background: rgba(255, 255, 255, 0.15); }
+        .btn-prev:hover { background: rgba(255, 255, 255, 0.16); }
 
         .btn-next {
-            background: var(--primary);
+            background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
             color: white;
-            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
         }
-        .btn-next:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        .btn-next:hover { transform: translateY(-2px); }
 
         /* Quiz Mode Styles */
         .quiz-container { display: none; text-align: left; }
-        .quiz-question { font-size: 18px; font-weight: 800; margin-bottom: 16px; text-align: center; color: #F8FAFC; }
-        .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+        .quiz-question { font-size: 18px; font-weight: 800; margin-bottom: 18px; text-align: center; color: #F8FAFC; }
+        .quiz-options { display: flex; flex-direction: column; gap: 12px; }
         .quiz-opt-btn {
-            padding: 14px;
+            padding: 15px;
             background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 14px;
+            border: 1.5px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
             color: #FFF;
             font-weight: 700;
             font-size: 14px;
@@ -310,17 +286,13 @@ HTML_TEMPLATE = """
             text-align: left;
             transition: all 0.2s;
         }
-        .quiz-opt-btn:hover { background: rgba(255, 255, 255, 0.15); }
-        .quiz-opt-btn.correct { background: rgba(16, 185, 129, 0.3) !important; border-color: var(--success) !important; color: #34D399 !important; }
-        .quiz-opt-btn.wrong { background: rgba(239, 68, 68, 0.3) !important; border-color: var(--danger) !important; color: #F87171 !important; }
+        .quiz-opt-btn:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.3); }
+        .quiz-opt-btn.correct { background: rgba(16, 185, 129, 0.25) !important; border-color: var(--success) !important; color: #34D399 !important; }
+        .quiz-opt-btn.wrong { background: rgba(239, 68, 68, 0.25) !important; border-color: var(--danger) !important; color: #F87171 !important; }
     </style>
 </head>
 <body>
-    <div class="bg-glow-1"></div>
-    <div class="bg-glow-2"></div>
-
     <div class="main-container">
-        <!-- Tab Navigation -->
         <div class="nav-tabs">
             <button class="tab-btn active" onclick="switchTab('flashcard')">🃏 Flashcards</button>
             <button class="tab-btn" onclick="switchTab('quiz')">✍️ Bài tập Quiz</button>
@@ -332,7 +304,7 @@ HTML_TEMPLATE = """
             {% endfor %}
         </select>
 
-        <!-- Section 1: Flashcard Mode -->
+        <!-- Flashcard Section -->
         <div id="flashcardSection">
             <input type="text" id="searchInput" placeholder="🔍 Tìm nhanh từ vựng..." onkeyup="filterCards()">
 
@@ -365,11 +337,11 @@ HTML_TEMPLATE = """
             </div>
         </div>
 
-        <!-- Section 2: Quiz Mode -->
+        <!-- Quiz Section -->
         <div id="quizSection" class="quiz-container">
             <div class="quiz-question" id="quizQuestion">Từ nào có nghĩa là...</div>
             <div class="quiz-options" id="quizOptions"></div>
-            <button class="btn btn-next" style="margin-top: 18px; width: 100%;" onclick="nextQuiz()">Câu tiếp theo ➔</button>
+            <button class="btn btn-next" style="margin-top: 20px; width: 100%;" onclick="nextQuiz()">Câu tiếp theo ➔</button>
         </div>
     </div>
 
@@ -411,7 +383,6 @@ HTML_TEMPLATE = """
             document.getElementById("wordExample").innerText = card.example ? `"${card.example}"` : "";
             document.getElementById("cardCounter").innerText = `Thẻ ${currentIndex + 1} / ${currentCards.length}`;
 
-            // Fetch Real-Time IPA Phonetics if missing
             if (card.ipa) {
                 document.getElementById("wordIpa").innerText = card.ipa;
             } else {
@@ -471,7 +442,6 @@ HTML_TEMPLATE = """
                 alert("Trình duyệt chưa hỗ trợ nhận diện giọng nói.");
                 return;
             }
-
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const recognition = new SpeechRecognition();
             recognition.lang = 'en-US';
@@ -520,7 +490,7 @@ HTML_TEMPLATE = """
             }
         }
 
-        // Quiz theo từng Band & Hiển thị đáp án đúng
+        // Quiz sạch sẽ, không lặp tên Band thừa thãi
         function nextQuiz() {
             const categoryWords = allData[currentCategory] || [];
             if (categoryWords.length < 2) {
@@ -532,7 +502,8 @@ HTML_TEMPLATE = """
             const correctIdx = Math.floor(Math.random() * categoryWords.length);
             const correctCard = categoryWords[correctIdx];
 
-            document.getElementById("quizQuestion").innerText = `[${currentCategory}] Từ nào có nghĩa: "${correctCard.back}"?`;
+            // Đã xóa bỏ cụm [Band] thừa thãi, chỉ giữ lại câu hỏi gọn gàng
+            document.getElementById("quizQuestion").innerText = `Từ nào có nghĩa là: "${correctCard.back}"?`;
 
             let options = [correctCard];
             while (options.length < Math.min(4, categoryWords.length)) {
@@ -555,14 +526,12 @@ HTML_TEMPLATE = """
                 btn.onclick = () => {
                     document.querySelectorAll(".quiz-opt-btn").forEach(b => {
                         b.disabled = true;
-                        // Nổi bật đáp án đúng màu xanh
                         if (b.dataset.front === correctCard.front) {
                             b.classList.add("correct");
-                            b.innerText += " ✅ (Đáp án đúng)";
+                            b.innerText += " ✅ (Đúng)";
                         }
                     });
 
-                    // Nếu bấm sai thì tô đỏ đáp án người dùng chọn
                     if (opt.front !== correctCard.front) {
                         btn.classList.add("wrong");
                         btn.innerText += " ❌";
