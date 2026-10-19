@@ -119,6 +119,36 @@
       "back": "Tránh, né tránh",
       "pos": "verb",
       "example": "You should avoid eating fast food."
+    },
+    {
+      "front": "Believe",
+      "back": "Tin tưởng, tin rằng",
+      "pos": "verb",
+      "example": "I believe practice makes perfect."
+    },
+    {
+      "front": "Choose",
+      "back": "Lựa chọn",
+      "pos": "verb",
+      "example": "You can choose your favorite topic."
+    },
+    {
+      "front": "Compare",
+      "back": "So sánh",
+      "pos": "verb",
+      "example": "Compare these two pictures carefully."
+    },
+    {
+      "front": "Decide",
+      "back": "Quyết định",
+      "pos": "verb",
+      "example": "They decided to move to a bigger city."
+    },
+    {
+      "front": "Explain",
+      "back": "Giải thích",
+      "pos": "verb",
+      "example": "Can you explain this rule again?"
     }
   ],
   "IELTS Band 4.0 - 5.0 (Trung cấp)": [
@@ -241,6 +271,36 @@
       "back": "Hậu quả, kết quả",
       "pos": "noun",
       "example": "Failure to plan can have serious consequences."
+    },
+    {
+      "front": "Maintain",
+      "back": "Duy trì, bảo dưỡng",
+      "pos": "verb",
+      "example": "You must maintain a healthy balance."
+    },
+    {
+      "front": "Predict",
+      "back": "Dự đoán, tiên đoán",
+      "pos": "verb",
+      "example": "It is hard to predict the future market."
+    },
+    {
+      "front": "Primary",
+      "back": "Sơ cấp, hàng đầu, chính",
+      "pos": "adj",
+      "example": "Safety is our primary concern."
+    },
+    {
+      "front": "Require",
+      "back": "Yêu cầu, đòi hỏi",
+      "pos": "verb",
+      "example": "This job requires good communication skills."
+    },
+    {
+      "front": "Significant",
+      "back": "Quan trọng, có ý nghĩa",
+      "pos": "adj",
+      "example": "There is a significant difference between them."
     }
   ],
   "IELTS Band 5.5 - 6.5 (Khá/Tốt)": [
@@ -363,6 +423,36 @@
       "back": "Thường thấy, phổ biến rộng rãi",
       "pos": "adj",
       "example": "This view is prevalent among young professionals."
+    },
+    {
+      "front": "Exacerbate",
+      "back": "Làm trầm trọng thêm",
+      "pos": "verb",
+      "example": "Stress can exacerbate health problems."
+    },
+    {
+      "front": "Feasible",
+      "back": "Khả thi, thực tế",
+      "pos": "adj",
+      "example": "It is a feasible plan for short term goals."
+    },
+    {
+      "front": "Hierarchy",
+      "back": "Hệ thống phân cấp",
+      "pos": "noun",
+      "example": "There is a strict corporate hierarchy."
+    },
+    {
+      "front": "Plausible",
+      "back": "Hợp lý, đáng tin",
+      "pos": "adj",
+      "example": "Her explanation sounded entirely plausible."
+    },
+    {
+      "front": "Unprecedented",
+      "back": "Chưa từng có tiền lệ",
+      "pos": "adj",
+      "example": "The country is facing unprecedented economic growth."
     }
   ]
 }
