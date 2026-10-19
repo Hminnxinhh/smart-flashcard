@@ -49,7 +49,6 @@ HTML_TEMPLATE = """
             position: relative;
         }
 
-        /* High-End Background Animation */
         .bg-glow-1 {
             position: absolute;
             width: 400px;
@@ -94,7 +93,6 @@ HTML_TEMPLATE = """
             text-align: center;
         }
 
-        /* Navigation Tabs */
         .nav-tabs {
             display: flex;
             background: rgba(255, 255, 255, 0.05);
@@ -147,7 +145,6 @@ HTML_TEMPLATE = """
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
         }
 
-        /* 3D Card */
         .scene {
             width: 100%;
             height: 250px;
@@ -299,7 +296,7 @@ HTML_TEMPLATE = """
 
         /* Quiz Mode Styles */
         .quiz-container { display: none; text-align: left; }
-        .quiz-question { font-size: 18px; font-weight: 800; margin-bottom: 16px; text-align: center; }
+        .quiz-question { font-size: 18px; font-weight: 800; margin-bottom: 16px; text-align: center; color: #F8FAFC; }
         .quiz-options { display: flex; flex-direction: column; gap: 10px; }
         .quiz-opt-btn {
             padding: 14px;
@@ -314,8 +311,8 @@ HTML_TEMPLATE = """
             transition: all 0.2s;
         }
         .quiz-opt-btn:hover { background: rgba(255, 255, 255, 0.15); }
-        .quiz-opt-btn.correct { background: rgba(16, 185, 129, 0.3) !important; border-color: var(--success) !important; }
-        .quiz-opt-btn.wrong { background: rgba(239, 68, 68, 0.3) !important; border-color: var(--danger) !important; }
+        .quiz-opt-btn.correct { background: rgba(16, 185, 129, 0.3) !important; border-color: var(--success) !important; color: #34D399 !important; }
+        .quiz-opt-btn.wrong { background: rgba(239, 68, 68, 0.3) !important; border-color: var(--danger) !important; color: #F87171 !important; }
     </style>
 </head>
 <body>
@@ -329,14 +326,14 @@ HTML_TEMPLATE = """
             <button class="tab-btn" onclick="switchTab('quiz')">✍️ Bài tập Quiz</button>
         </div>
 
+        <select id="categorySelect" onchange="changeCategory()">
+            {% for cat in categories %}
+            <option value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+        </select>
+
         <!-- Section 1: Flashcard Mode -->
         <div id="flashcardSection">
-            <select id="categorySelect" onchange="changeCategory()">
-                {% for cat in categories %}
-                <option value="{{ cat }}">{{ cat }}</option>
-                {% endfor %}
-            </select>
-
             <input type="text" id="searchInput" placeholder="🔍 Tìm nhanh từ vựng..." onkeyup="filterCards()">
 
             <div id="cardCounter" style="font-size: 12px; font-weight: 700; color: #94A3B8; margin-bottom: 6px;">Thẻ 1 / 1</div>
@@ -414,7 +411,7 @@ HTML_TEMPLATE = """
             document.getElementById("wordExample").innerText = card.example ? `"${card.example}"` : "";
             document.getElementById("cardCounter").innerText = `Thẻ ${currentIndex + 1} / ${currentCards.length}`;
 
-            // 🌐 Fetch Real-Time IPA Phonetics if missing
+            // Fetch Real-Time IPA Phonetics if missing
             if (card.ipa) {
                 document.getElementById("wordIpa").innerText = card.ipa;
             } else {
@@ -454,6 +451,9 @@ HTML_TEMPLATE = """
         function changeCategory() {
             currentCategory = document.getElementById("categorySelect").value;
             loadCategoryCards();
+            if (document.getElementById("quizSection").style.display === "block") {
+                nextQuiz();
+            }
         }
 
         function filterCards() { loadCategoryCards(); }
@@ -466,24 +466,22 @@ HTML_TEMPLATE = """
             window.speechSynthesis.speak(utterance);
         }
 
-        // 🎤 Speech Recognition (Microphone Practice & AI Evaluation)
         function startSpeechRecognition() {
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                alert("Trình duyệt của bạn chưa hỗ trợ tính năng nhận diện giọng nói.");
+                alert("Trình duyệt chưa hỗ trợ nhận diện giọng nói.");
                 return;
             }
 
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const recognition = new SpeechRecognition();
             recognition.lang = 'en-US';
-            recognition.interimResults = false;
 
             const micBtn = document.getElementById("micBtn");
             const speechResult = document.getElementById("speechResult");
 
             micBtn.classList.add("recording");
             speechResult.style.color = "#A5B4FC";
-            speechResult.innerText = "🎙️ Đang nghe bạn nói...";
+            speechResult.innerText = "🎙️ Đang nghe...";
 
             recognition.start();
 
@@ -494,25 +492,20 @@ HTML_TEMPLATE = """
 
                 if (spokenText === targetText) {
                     speechResult.style.color = "#34D399";
-                    speechResult.innerText = `✅ Phát âm chuẩn xác: "${spokenText}"!`;
+                    speechResult.innerText = `✅ Chuẩn xác: "${spokenText}"!`;
                 } else {
                     speechResult.style.color = "#F87171";
-                    speechResult.innerText = `❌ Nghe được: "${spokenText}". Thử lại nhé!`;
+                    speechResult.innerText = `❌ Nghe được: "${spokenText}"`;
                 }
             };
 
             recognition.onerror = () => {
                 micBtn.classList.remove("recording");
                 speechResult.style.color = "#F87171";
-                speechResult.innerText = "❌ Không nghe rõ. Vui lòng cấp quyền micro và thử lại!";
-            };
-
-            recognition.onend = () => {
-                micBtn.classList.remove("recording");
+                speechResult.innerText = "❌ Không nghe rõ. Vui lòng thử lại!";
             };
         }
 
-        // ✍️ Quiz Mode Logic
         function switchTab(tab) {
             document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
             if (tab === 'flashcard') {
@@ -527,23 +520,23 @@ HTML_TEMPLATE = """
             }
         }
 
+        // Quiz theo từng Band & Hiển thị đáp án đúng
         function nextQuiz() {
-            const original = allData[currentCategory] || [];
-            if (original.length < 2) {
-                document.getElementById("quizQuestion").innerText = "Cần ít nhất 2 từ vựng để làm bài tập!";
+            const categoryWords = allData[currentCategory] || [];
+            if (categoryWords.length < 2) {
+                document.getElementById("quizQuestion").innerText = "Cần thêm từ vựng cho dải Band này!";
                 document.getElementById("quizOptions").innerHTML = "";
                 return;
             }
 
-            const correctIdx = Math.floor(Math.random() * original.length);
-            const correctCard = original[correctIdx];
+            const correctIdx = Math.floor(Math.random() * categoryWords.length);
+            const correctCard = categoryWords[correctIdx];
 
-            document.getElementById("quizQuestion").innerText = `Từ nào có nghĩa là: "${correctCard.back}"?`;
+            document.getElementById("quizQuestion").innerText = `[${currentCategory}] Từ nào có nghĩa: "${correctCard.back}"?`;
 
-            // Prepare 4 options
             let options = [correctCard];
-            while (options.length < Math.min(4, original.length)) {
-                let randCard = original[Math.floor(Math.random() * original.length)];
+            while (options.length < Math.min(4, categoryWords.length)) {
+                let randCard = categoryWords[Math.floor(Math.random() * categoryWords.length)];
                 if (!options.some(o => o.front === randCard.front)) {
                     options.push(randCard);
                 }
@@ -557,16 +550,23 @@ HTML_TEMPLATE = """
                 const btn = document.createElement("button");
                 btn.className = "quiz-opt-btn";
                 btn.innerText = opt.front;
+                btn.dataset.front = opt.front;
+
                 btn.onclick = () => {
-                    if (opt.front === correctCard.front) {
-                        btn.classList.add("correct");
-                        btn.innerText += " ✅ (Chính xác!)";
-                    } else {
+                    document.querySelectorAll(".quiz-opt-btn").forEach(b => {
+                        b.disabled = true;
+                        // Nổi bật đáp án đúng màu xanh
+                        if (b.dataset.front === correctCard.front) {
+                            b.classList.add("correct");
+                            b.innerText += " ✅ (Đáp án đúng)";
+                        }
+                    });
+
+                    // Nếu bấm sai thì tô đỏ đáp án người dùng chọn
+                    if (opt.front !== correctCard.front) {
                         btn.classList.add("wrong");
                         btn.innerText += " ❌";
                     }
-                    // Disable all buttons after click
-                    document.querySelectorAll(".quiz-opt-btn").forEach(b => b.disabled = true);
                 };
                 optionsContainer.appendChild(btn);
             });
