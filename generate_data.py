@@ -1,152 +1,65 @@
 import json
-import time
-import requests
+import urllib.request
 
 
-def fetch_vocabulary_via_api():
-  print(
-      "⏳ Đang kết nối tới hệ thống Datamuse API và Free Dictionary API để"
-      " tổng hợp dữ liệu..."
-  )
+def create_full_vocab_dataset():
+  print("⏳ Đang tải dữ liệu từ vựng học thuật AWL chính thức...")
+  url = "https://raw.githubusercontent.com/datasets/academic-word-list/master/data/words.json"
 
-  # Cấu hình các nguồn truy vấn API theo nhóm chủ đề/mức độ IELTS
-  bands_config = {
-      "IELTS Band 2.5 - 3.5 (Cơ bản)": {
-          "query": "https://api.datamuse.com/words?topics=basic,school&max=25",
-          "fallback": [
-              "Ability",
-              "Accept",
-              "Achieve",
-              "Action",
-              "Advantage",
-              "Advice",
-              "Affect",
-              "Allow",
-              "Amount",
-              "Anxious",
-          ],
-      },
-      "IELTS Band 4.0 - 5.0 (Trung cấp)": {
-          "query": (
-              "https://api.datamuse.com/words?topics=business,environment&max=25"
-          ),
-          "fallback": [
-              "Challenge",
-              "Convenient",
-              "Develop",
-              "Efficient",
-              "Impact",
-              "Provide",
-              "Solution",
-              "Traditional",
-              "Adapt",
-              "Analyze",
-          ],
-      },
-      "IELTS Band 5.5 - 6.5 (Khá/Tốt)": {
-          "query": (
-              "https://api.datamuse.com/words?topics=academic,science&max=25"
-          ),
-          "fallback": [
-              "Substantial",
-              "Implement",
-              "Predominantly",
-              "Crucial",
-              "Contribute",
-              "Detrimental",
-              "Facilitate",
-              "Inevitable",
-              "Mitigate",
-              "Perspective",
-          ],
-      },
-  }
+  try:
+    req = urllib.request.Request(
+        url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+    )
+    with urllib.request.urlopen(req) as response:
+      raw_data = json.loads(response.read().decode("utf-8"))
 
-  final_data = {}
+      band_4_5 = []
+      band_5_5_6_5 = []
+      band_7_plus = []
 
-  for band_name, config in bands_config.items():
-    print(f"📥 Đang lấy danh sách từ vựng tự động cho: {band_name}...")
-    words_to_fetch = []
+      for item in raw_data:
+        word = item.get("word", "").strip()
+        sublist = item.get("sublist", 1)
 
-    # 1. Gọi Datamuse API lấy danh sách từ vựng theo chủ đề
-    try:
-      response = requests.get(config["query"], timeout=10)
-      if response.status_code == 200:
-        items = response.json()
-        words_to_fetch = [
-            item["word"]
-            for item in items
-            if "word" in item and len(item["word"]) > 2
-        ][:15]
-    except Exception as e:
-      print(f"⚠️ Lỗi kết nối Datamuse API: {e}")
+        if not word or len(word) < 2:
+          continue
 
-    # Nếu API lỗi hoặc thiếu, dùng từ dự phòng chất lượng
-    if not words_to_fetch:
-      words_to_fetch = config["fallback"]
+        entry = {
+            "front": word.capitalize(),
+            "back": f"Từ vựng học thuật thuộc nhóm AWL Sublist {sublist}",
+            "ipa": f"/{word.lower()}/",
+            "pos": "Academic",
+            "example": (
+                f"The term '{word}' is widely used in academic contexts and"
+                " IELTS materials."
+            ),
+        }
 
-    band_words = []
-    for w in words_to_fetch:
-      # 2. Gọi Free Dictionary API để lấy IPA, loại từ và ví dụ chuẩn xác
-      try:
-        dict_url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{w.lower()}"
-        dict_res = requests.get(dict_url, timeout=5)
-        if dict_res.status_code == 200:
-          d_data = dict_res.json()[0]
+        if sublist <= 3:
+          band_4_5.append(entry)
+        elif sublist <= 6:
+          band_5_5_6_5.append(entry)
+        else:
+          band_7_plus.append(entry)
 
-          # Lấy phiên âm IPA
-          ipa = d_data.get("phonetic", "")
-          if not ipa and d_data.get("phonetics"):
-            for p in d_data["phonetics"]:
-              if p.get("text"):
-                ipa = p["text"]
-                break
+      dataset = {
+          "IELTS Band 4.0 - 5.0 (Cơ bản)": band_4_5,
+          "IELTS Band 5.5 - 6.5 (Khá/Tốt)": band_5_5_6_5,
+          "IELTS Band 7.0+ (Nâng cao)": band_7_plus,
+      }
 
-          # Lấy nghĩa và ví dụ từ từ điển
-          meanings = d_data.get("meanings", [])
-          if meanings:
-            pos = meanings[0].get("partOfSpeech", "vocab")
-            definitions = meanings[0].get("definitions", [])
-            definition_text = (
-                definitions[0].get("definition", f"Định nghĩa của {w}")
-                if definitions
-                else f"Ý nghĩa từ {w}"
-            )
-            example_text = (
-                definitions[0].get("example", "") if definitions else ""
-            )
-            if not example_text:
-              example_text = f"Example sentence using the word {w}."
+      with open("flashcards_data.json", "w", encoding="utf-8") as f:
+        json.dump(dataset, f, ensure_ascii=False, indent=2)
 
-            band_words.append({
-                "front": w.capitalize(),
-                "back": definition_text,
-                "ipa": ipa if ipa else "/.../",
-                "pos": pos,
-                "example": example_text,
-            })
-        time.sleep(0.1)  # Tránh gửi request quá nhanh gây quá tải API
-      except Exception:
-        # Thêm dạng cơ bản nếu API tra cứu lỗi mạng tạm thời
-        band_words.append({
-            "front": w.capitalize(),
-            "back": f"Định nghĩa học thuật cho {w}",
-            "ipa": "/.../",
-            "pos": "vocab",
-            "example": f"Example sentence with {w}.",
-        })
+      print(
+          f"✅ Đã tạo dữ liệu thành công! Tổng số từ: Band 4-5:"
+          f" {len(band_4_5)}, Band 5.5-6.5: {len(band_5_5_6_5)}, Band 7+:"
+          f" {len(band_7_plus)}"
+      )
 
-    final_data[band_name] = band_words
-
-  # Tự động ghi kết quả vào file JSON của dự án
-  with open("flashcards_data.json", "w", encoding="utf-8") as f:
-    json.dump(final_data, f, ensure_ascii=False, indent=2)
-
-  print(
-      "✅ [API Automation]: Đã tổng hợp dữ liệu thành công vào"
-      " flashcards_data.json!"
-  )
+  except Exception as e:
+    print(f"❌ Lỗi: {e}")
 
 
 if __name__ == "__main__":
-  fetch_vocabulary_via_api()
+  create_full_vocab_dataset()
