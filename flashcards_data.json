@@ -150,6 +150,41 @@
       "ipa": "/kənˈt(ʃ)ɹɪb.juːt/",
       "pos": "verb",
       "example": "to contribute articles to a journal"
+    },
+    {
+      "front": "Detrimental",
+      "back": "Causing damage or harm.",
+      "ipa": "/ˌdɛtɹɪˈmɛntəl/",
+      "pos": "adjective",
+      "example": "Smoking tobacco can be detrimental to your health."
+    },
+    {
+      "front": "Facilitate",
+      "back": "To make easy or easier.",
+      "ipa": "/fəˈsɪləteɪt/",
+      "pos": "verb",
+      "example": "Example sentence using the word Facilitate."
+    },
+    {
+      "front": "Inevitable",
+      "back": "Something that is predictable, necessary, or cannot be avoided.",
+      "ipa": "/ɪnˈɛvɪtəbəl/",
+      "pos": "noun",
+      "example": "Example sentence using the word Inevitable."
+    },
+    {
+      "front": "Mitigate",
+      "back": "To reduce, lessen, or decrease; to make less severe or easier to bear.",
+      "ipa": "/ˈmɪt.ɪ.ɡeɪt/",
+      "pos": "verb",
+      "example": "Example sentence using the word Mitigate."
+    },
+    {
+      "front": "Perspective",
+      "back": "A view, vista or outlook.",
+      "ipa": "/pɚˈspɛktɪv/",
+      "pos": "noun",
+      "example": "Example sentence using the word Perspective."
     }
   ]
 }

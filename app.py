@@ -1,18 +1,18 @@
 import json
 import os
-from flask import Flask, render_template_string
+from flask import Flask, jsonify, render_template_string
 
 app = Flask(__name__)
-STORY_FILE = "story_data.json"
+DATA_FILE = "flashcards_data.json"
 
 
-def load_story():
-  if os.path.exists(STORY_FILE):
+def load_vocab_data():
+  if os.path.exists(DATA_FILE):
     try:
-      with open(STORY_FILE, "r", encoding="utf-8") as f:
+      with open(DATA_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
-    except Exception:
-      pass
+    except Exception as e:
+      print(f"Lỗi đọc file JSON: {e}")
   return {}
 
 
@@ -22,314 +22,316 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detective Game Pro - Căn Phòng Khóa Cấm</title>
+    <title>IELTS Vocabulary Master Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
+            --bg-dark: #0B0F19;
+            --card-bg: rgba(255, 255, 255, 0.06);
+            --border-color: rgba(255, 255, 255, 0.12);
             --primary: #6366F1;
-            --primary-hover: #4F46E5;
+            --primary-glow: rgba(99, 102, 241, 0.4);
             --accent: #EC4899;
-            --success: #10B981;
-            --danger: #EF4444;
+            --text-main: #F8FAFC;
+            --text-sub: #94A3B8;
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #0B0F19;
+            background-color: var(--bg-dark);
             background-image: 
-                radial-gradient(at 10% 20%, rgba(99, 102, 241, 0.4) 0px, transparent 50%),
-                radial-gradient(at 90% 10%, rgba(236, 72, 153, 0.35) 0px, transparent 50%),
-                radial-gradient(at 50% 90%, rgba(14, 165, 233, 0.3) 0px, transparent 50%);
-            color: #F8FAFC;
+                radial-gradient(at 15% 15%, rgba(99, 102, 241, 0.25) 0px, transparent 50%),
+                radial-gradient(at 85% 85%, rgba(236, 72, 153, 0.2) 0px, transparent 50%);
+            color: var(--text-main);
             min-height: 100vh;
-            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
         }
 
-        .main-container {
-            position: relative;
-            z-index: 10;
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 36px;
-            padding: 32px 28px;
+        .app-container {
             width: 100%;
-            max-width: 520px;
-            box-shadow: 0 35px 70px -15px rgba(0, 0, 0, 0.7);
+            max-width: 540px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-color);
+            border-radius: 32px;
+            padding: 28px 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         h1 {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 800;
-            margin-bottom: 8px;
-            color: #FFFFFF;
-            text-align: center;
+            background: linear-gradient(135deg, #818CF8 0%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
         }
 
-        .case-desc {
+        .subtitle {
             font-size: 13px;
-            color: #94A3B8;
-            text-align: center;
-            margin-bottom: 24px;
-            line-height: 1.5;
+            color: var(--text-sub);
         }
 
-        .progress-bar {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 24px;
-            justify-content: center;
-        }
-
-        .step-dot {
-            width: 35px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            transition: all 0.3s;
-        }
-
-        .step-dot.active { background: var(--primary); box-shadow: 0 0 10px rgba(99, 102, 241, 0.6); }
-        .step-dot.completed { background: var(--success); }
-
-        .puzzle-box {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 16px;
-        }
-
-        .puzzle-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #818CF8;
-            margin-bottom: 10px;
-        }
-
-        .hint-text {
-            font-size: 13px;
-            color: #CBD5E1;
-            font-style: italic;
-            margin-bottom: 16px;
-            line-height: 1.5;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 12px;
-            border-radius: 12px;
-            border-left: 3px solid var(--primary);
-        }
-
-        input[type="text"] {
+        .band-selector {
             width: 100%;
-            padding: 13px 16px;
+            padding: 12px 16px;
             border-radius: 14px;
-            border: 1.5px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.07);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
             color: #FFF;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             outline: none;
-            margin-bottom: 14px;
-            transition: all 0.2s;
+            margin-bottom: 20px;
+            cursor: pointer;
         }
 
-        input[type="text"]:focus {
-            border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.12);
+        .band-selector option {
+            background: #0F172A;
+            color: #FFF;
+        }
+
+        /* Flashcard Styles */
+        .card-wrapper {
+            perspective: 1000px;
+            height: 260px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .card-wrapper.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .word-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #FFF;
+        }
+
+        .word-ipa {
+            font-size: 15px;
+            color: #818CF8;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .word-pos {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(99, 102, 241, 0.2);
+            color: #A5B4FC;
+            margin-bottom: 12px;
+        }
+
+        .meaning-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #F3F4F6;
+            margin-bottom: 12px;
+        }
+
+        .example-text {
+            font-size: 13px;
+            color: var(--text-sub);
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        .tap-hint {
+            position: absolute;
+            bottom: 12px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 12px;
         }
 
         .btn {
-            width: 100%;
+            flex: 1;
             padding: 14px;
             border: none;
-            border-radius: 14px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-prev {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-next {
             background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
             color: #FFF;
-            font-size: 14px;
-            font-weight: 800;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-            transition: transform 0.2s;
+            box-shadow: 0 4px 15px var(--primary-glow);
         }
 
         .btn:hover { transform: translateY(-2px); }
 
-        .result-msg {
-            font-size: 13px;
-            font-weight: 700;
-            margin-top: 12px;
+        .progress-text {
             text-align: center;
-            min-height: 20px;
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-top: 14px;
+            font-weight: 600;
         }
-
-        .suspect-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .suspect-card {
-            padding: 14px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1.5px solid rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .suspect-card:hover { background: rgba(255, 255, 255, 0.1); }
-        .suspect-card.selected {
-            background: rgba(99, 102, 241, 0.25);
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
-        }
-
-        .suspect-name { font-weight: 700; font-size: 14px; color: #FFF; margin-bottom: 2px; }
-        .suspect-desc { font-size: 12px; color: #94A3B8; }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <h1 id="gameTitle">Đang tải vụ án...</h1>
-        <div class="case-desc" id="gameDesc"></div>
+    <div class="app-container">
+        <header>
+            <h1>IELTS Vocab Master</h1>
+            <div class="subtitle">Hệ thống từ vựng học thuật theo dải điểm Band</div>
+        </header>
 
-        <div class="progress-bar">
-            <div class="step-dot active" id="dot1"></div>
-            <div class="step-dot" id="dot2"></div>
-            <div class="step-dot" id="dot3"></div>
+        <select class="band-selector" id="bandSelect" onchange="changeBand()"></select>
+
+        <div class="card-wrapper" id="cardWrapper" onclick="flipCard()">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span class="word-pos" id="wordPos">---</span>
+                    <div class="word-title" id="wordFront">Loading...</div>
+                    <div class="word-ipa" id="wordIpa">/.../</div>
+                    <div class="tap-hint">💡 Chạm vào thẻ để xem nghĩa & ví dụ</div>
+                </div>
+                <div class="card-back">
+                    <div class="meaning-text" id="wordMeaning">---</div>
+                    <div class="example-text" id="wordExample">---</div>
+                    <div class="tap-hint">💡 Chạm vào thẻ để lật lại</div>
+                </div>
+            </div>
         </div>
 
-        <div id="puzzleArea"></div>
+        <div class="controls">
+            <button class="btn btn-prev" onclick="prevCard()">◄ Từ trước</button>
+            <button class="btn btn-next" onclick="nextCard()">Từ tiếp ►</button>
+        </div>
+
+        <div class="progress-text" id="progressText">0 / 0</div>
     </div>
 
     <script>
-        const storyData = {{ story | tojson }};
-        let currentStage = 1;
-        let selectedSuspect = null;
+        const vocabData = {{ data | tojson }};
+        let currentBand = "";
+        let currentIndex = 0;
 
-        function initGame() {
-            if (!storyData.chapter_info) return;
-            document.getElementById("gameTitle").innerText = storyData.chapter_info.title;
-            document.getElementById("gameDesc").innerText = storyData.chapter_info.description;
-            renderStage();
-        }
-
-        function renderStage() {
-            const area = document.getElementById("puzzleArea");
-            area.innerHTML = "";
-
-            document.getElementById("dot1").className = currentStage === 1 ? "step-dot active" : (currentStage > 1 ? "step-dot completed" : "step-dot");
-            document.getElementById("dot2").className = currentStage === 2 ? "step-dot active" : (currentStage > 2 ? "step-dot completed" : "step-dot");
-            document.getElementById("dot3").className = currentStage === 3 ? "step-dot active" : "step-dot";
-
-            if (currentStage === 1) {
-                const p1 = storyData.puzzles.puzzle_1;
-                area.innerHTML = `
-                    <div class="puzzle-box">
-                        <div class="puzzle-title">${p1.title}</div>
-                        <div class="hint-text">${p1.hint_text}</div>
-                        <input type="text" id="answerInput" placeholder="Nhập mã 4 chữ số...">
-                        <button class="btn" onclick="checkPuzzle1()">Xác nhận mật mã ➔</button>
-                        <div class="result-msg" id="resMsg"></div>
-                    </div>
-                `;
-            } else if (currentStage === 2) {
-                const p2 = storyData.puzzles.puzzle_2;
-                area.innerHTML = `
-                    <div class="puzzle-box">
-                        <div class="puzzle-title">${p2.title}</div>
-                        <div class="hint-text">💡 Manh mối tin nhắn nhắc đến từ khóa: 'Giao dịch lúc RẠNG ĐÔNG' (4 ký tự tiếng Anh).</div>
-                        <input type="text" id="answerInput" placeholder="Nhập từ khóa...">
-                        <button class="btn" onclick="checkPuzzle2()">Giải mã file ➔</button>
-                        <div class="result-msg" id="resMsg"></div>
-                    </div>
-                `;
-            } else if (currentStage === 3) {
-                const p3 = storyData.puzzles.puzzle_3;
-                let suspectsHtml = storyData.suspects.map(s => `
-                    <div class="suspect-card" id="suspect-${s.id}" onclick="selectSuspect('${s.id}')">
-                        <div class="suspect-name">${s.name}</div>
-                        <div class="suspect-desc">${s.desc}</div>
-                    </div>
-                `).join('');
-
-                area.innerHTML = `
-                    <div class="puzzle-box">
-                        <div class="puzzle-title">Thử thách 3: Chỉ định Thủ phạm</div>
-                        <div class="hint-text">🔍 Dựa vào các bằng chứng, ai là kẻ dàn dựng vụ mất tích?</div>
-                        <div class="suspect-grid">${suspectsHtml}</div>
-                        <button class="btn" onclick="checkPuzzle3()">Kết luận vụ án 🏆</button>
-                        <div class="result-msg" id="resMsg"></div>
-                    </div>
-                `;
-            }
-        }
-
-        function checkPuzzle1() {
-            const val = document.getElementById("answerInput").value.trim();
-            const p1 = storyData.puzzles.puzzle_1;
-            const msg = document.getElementById("resMsg");
-            if (val === p1.answer) {
-                msg.style.color = "#34D399";
-                msg.innerText = p1.success_msg;
-                setTimeout(() => { currentStage = 2; renderStage(); }, 1500);
-            } else {
-                msg.style.color = "#F87171";
-                msg.innerText = "❌ Mật mã không chính xác. Hãy kiểm tra lại!";
-            }
-        }
-
-        function checkPuzzle2() {
-            const val = document.getElementById("answerInput").value.trim().toUpperCase();
-            const p2 = storyData.puzzles.puzzle_2;
-            const msg = document.getElementById("resMsg");
-            if (val === p2.answer) {
-                msg.style.color = "#34D399";
-                msg.innerText = p2.success_msg;
-                setTimeout(() => { currentStage = 3; renderStage(); }, 1500);
-            } else {
-                msg.style.color = "#F87171";
-                msg.innerText = "❌ Từ khóa sai. Thử lại nhé!";
-            }
-        }
-
-        function selectSuspect(id) {
-            selectedSuspect = id;
-            document.querySelectorAll('.suspect-card').forEach(c => c.classList.remove('selected'));
-            document.getElementById(`suspect-${id}`).classList.add('selected');
-        }
-
-        function checkPuzzle3() {
-            const msg = document.getElementById("resMsg");
-            const p3 = storyData.puzzles.puzzle_3;
-            if (!selectedSuspect) {
-                msg.style.color = "#F87171";
-                msg.innerText = "⚠️ Vui lòng chọn một nghi phạm!";
+        function initApp() {
+            const bands = Object.keys(vocabData);
+            if (bands.length === 0) {
+                document.getElementById("wordFront").innerText = "Chưa có dữ liệu";
                 return;
             }
-            if (selectedSuspect === p3.answer) {
-                msg.style.color = "#34D399";
-                msg.innerText = p3.success_msg;
-                setTimeout(() => {
-                    alert("🎉 CHÚC MỪNG BẠN ĐÃ PHÁ ÁN THÀNH CÔNG!");
-                    currentStage = 1;
-                    renderStage();
-                }, 2000);
-            } else {
-                msg.style.color = "#F87171";
-                msg.innerText = "❌ Sai rồi! Kẻ này vô tội. Hãy suy luận lại!";
+
+            const select = document.getElementById("bandSelect");
+            select.innerHTML = "";
+            bands.forEach(band => {
+                const opt = document.createElement("option");
+                opt.value = band;
+                opt.innerText = band;
+                select.appendChild(opt);
+            });
+
+            currentBand = bands[0];
+            currentIndex = 0;
+            renderCard();
+        }
+
+        function renderCard() {
+            const list = vocabData[currentBand] || [];
+            if (list.length === 0) return;
+
+            const item = list[currentIndex];
+            document.getElementById("wordFront").innerText = item.front || item.word || "N/A";
+            document.getElementById("wordIpa").innerText = item.ipa || "/.../";
+            document.getElementById("wordPos").innerText = item.pos || "vocab";
+            document.getElementById("wordMeaning").innerText = item.back || item.meaning || "Chưa có định nghĩa";
+            document.getElementById("wordExample").innerText = item.example ? `"${item.example}"` : "";
+            
+            document.getElementById("progressText").innerText = `${currentIndex + 1} / ${list.length}`;
+            document.getElementById("cardWrapper").classList.remove("flipped");
+        }
+
+        function flipCard() {
+            document.getElementById("cardWrapper").classList.toggle("flipped");
+        }
+
+        function nextCard() {
+            const list = vocabData[currentBand] || [];
+            if (currentIndex < list.length - 1) {
+                currentIndex++;
+                renderCard();
             }
         }
 
-        initGame();
+        function prevCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderCard();
+            }
+        }
+
+        function changeBand() {
+            currentBand = document.getElementById("bandSelect").value;
+            currentIndex = 0;
+            renderCard();
+        }
+
+        initApp();
     </script>
 </body>
 </html>
@@ -338,8 +340,8 @@ HTML_TEMPLATE = """
 
 @app.route("/")
 def index():
-  story = load_story()
-  return render_template_string(HTML_TEMPLATE, story=story)
+  data = load_vocab_data()
+  return render_template_string(HTML_TEMPLATE, data=data)
 
 
 if __name__ == "__main__":
