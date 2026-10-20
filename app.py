@@ -1,79 +1,278 @@
 import json
 import os
-import urllib.request
 from flask import Flask, render_template_string
 
 app = Flask(__name__)
-DATA_FILE = "flashcards_data.json"
+
+# Dữ liệu từ vựng IELTS AWL nhúng trực tiếp trong code (Đảm bảo 100% không lo thiếu file JSON)
+DEFAULT_VOCAB_DATA = {
+    "IELTS Band 4.0 - 5.0 (Cơ bản)": [
+        {
+            "front": "Analyse",
+            "ipa": "/ˈæn.əl.aɪz/",
+            "pos": "Verb",
+            "back": "Phân tích (nghiên cứu chi tiết cấu trúc)",
+            "example": (
+                "Researchers need to analyse the data before reaching a"
+                " conclusion."
+            ),
+        },
+        {
+            "front": "Approach",
+            "ipa": "/əˈprəʊtʃ/",
+            "pos": "Noun / Verb",
+            "back": "Tiếp cận / Phương pháp giải quyết",
+            "example": "We need a new approach to solve this complex problem.",
+        },
+        {
+            "front": "Area",
+            "ipa": "/ˈeə.ri.ə/",
+            "pos": "Noun",
+            "back": "Lĩnh vực / Khu vực",
+            "example": (
+                "This study focuses on the area of environmental science."
+            ),
+        },
+        {
+            "front": "Assess",
+            "ipa": "/əˈses/",
+            "pos": "Verb",
+            "back": "Đánh giá / Định giá",
+            "example": (
+                "The exam is designed to assess students' writing skills."
+            ),
+        },
+        {
+            "front": "Assume",
+            "ipa": "/əˈsjuːm/",
+            "pos": "Verb",
+            "back": "Cho rằng / Giả định",
+            "example": "It is incorrect to assume that all results are equal.",
+        },
+        {
+            "front": "Authority",
+            "ipa": "/ɔːˈθɒr.ə.ti/",
+            "pos": "Noun",
+            "back": "Chính quyền / Quyền lực / Chuyên gia",
+            "example": "She is a leading authority on international law.",
+        },
+        {
+            "front": "Benefit",
+            "ipa": "/ˈben.ɪ.fɪt/",
+            "pos": "Noun / Verb",
+            "back": "Lợi ích / Thu lợi từ",
+            "example": "Regular study brings great benefits to students.",
+        },
+        {
+            "front": "Concept",
+            "ipa": "/ˈkɒn.sept/",
+            "pos": "Noun",
+            "back": "Khái niệm / Ý tưởng",
+            "example": (
+                "Understanding the basic concept is vital for this course."
+            ),
+        },
+        {
+            "front": "Context",
+            "ipa": "/ˈkɒn.tekst/",
+            "pos": "Noun",
+            "back": "Bối cảnh / Ngữ cảnh",
+            "example": (
+                "Words must be understood in their original context."
+            ),
+        },
+        {
+            "front": "Create",
+            "ipa": "/kriˈeɪt/",
+            "pos": "Verb",
+            "back": "Tạo ra / Sáng tạo",
+            "example": "The campaign aims to create job opportunities.",
+        },
+        {
+            "front": "Data",
+            "ipa": "/ˈdeɪ.tə/",
+            "pos": "Noun",
+            "back": "Dữ liệu / Thông tin",
+            "example": "The collected data supports our main hypothesis.",
+        },
+        {
+            "front": "Definition",
+            "ipa": "/ˌdef.ɪˈnɪʃ.ən/",
+            "pos": "Noun",
+            "back": "Định nghĩa",
+            "example": (
+                "Can you provide a clear definition of this academic term?"
+            ),
+        },
+        {
+            "front": "Derived",
+            "ipa": "/dɪˈraɪvd/",
+            "pos": "Adjective",
+            "back": "Bắt nguồn từ / Bị chiết xuất từ",
+            "example": (
+                "Many English words are derived from ancient Latin roots."
+            ),
+        },
+        {
+            "front": "Distribution",
+            "ipa": "/ˌdɪs.trɪˈbjuː.ʃən/",
+            "pos": "Noun",
+            "back": "Sự phân phối / Phân bố",
+            "example": "The global distribution of wealth remains unequal.",
+        },
+        {
+            "front": "Economic",
+            "ipa": "/ˌiː.kəˈnɒm.ɪk/",
+            "pos": "Adjective",
+            "back": "Thuộc về kinh tế",
+            "example": "The country experienced rapid economic growth.",
+        },
+    ],
+    "IELTS Band 5.5 - 6.5 (Khá/Tốt)": [
+        {
+            "front": "Acquire",
+            "ipa": "/əˈkwaɪər/",
+            "pos": "Verb",
+            "back": "Lĩnh hội / Đạt được (kỹ năng, kiến thức)",
+            "example": (
+                "Students must acquire language skills through continuous"
+                " practice."
+            ),
+        },
+        {
+            "front": "Category",
+            "ipa": "/ˈkæt.ə.ɡri/",
+            "pos": "Noun",
+            "back": "Hạng / Loại / Danh mục",
+            "example": (
+                "The books are divided into separate academic categories."
+            ),
+        },
+        {
+            "front": "Complex",
+            "ipa": "/ˈkɒm.pleks/",
+            "pos": "Adjective",
+            "back": "Phức tạp / Rắc rối",
+            "example": (
+                "The human brain is an extraordinarily complex organ."
+            ),
+        },
+        {
+            "front": "Consequence",
+            "ipa": "/ˈkɒn.sɪ.kwəns/",
+            "pos": "Noun",
+            "back": "Hậu quả / Kết quả",
+            "example": "Global warming is a direct consequence of pollution.",
+        },
+        {
+            "front": "Construct",
+            "ipa": "/kənˈstrʌkt/",
+            "pos": "Verb",
+            "back": "Xây dựng / Kiến tạo",
+            "example": (
+                "Engineers plan to construct a sustainable infrastructure."
+            ),
+        },
+        {
+            "front": "Evaluate",
+            "ipa": "/ɪˈvæl.ju.eɪt/",
+            "pos": "Verb",
+            "back": "Đánh giá / Ước lượng giá trị",
+            "example": "Professors will evaluate your research proposal.",
+        },
+        {
+            "front": "Impact",
+            "ipa": "/ˈɪm.pækt/",
+            "pos": "Noun / Verb",
+            "back": "Tác động mạnh mẽ / Ảnh hưởng",
+            "example": "Technology has a profound impact on modern education.",
+        },
+        {
+            "front": "Obtain",
+            "ipa": "/əbˈteɪn/",
+            "pos": "Verb",
+            "back": "Đạt được / Lấy được",
+            "example": "You need to obtain permission before conducting the survey.",
+        },
+        {
+            "front": "Primary",
+            "ipa": "/ˈpraɪ.mər.i/",
+            "pos": "Adjective",
+            "back": "Chính / Chủ yếu / Sơ cấp",
+            "example": "The primary goal of this initiative is public health.",
+        },
+        {
+            "front": "Relevant",
+            "ipa": "/ˈrel.ə.vənt/",
+            "pos": "Adjective",
+            "back": "Lên quan / Thích hợp",
+            "example": "Please include only relevant details in your essay.",
+        },
+    ],
+    "IELTS Band 7.0+ (Nâng cao)": [
+        {
+            "front": "Coversely",
+            "ipa": "/ˈkɒn.vɜːs.li/",
+            "pos": "Adverb",
+            "back": "Ngược lại / Trái lại",
+            "example": (
+                "Some thrive under stress; conversely, others lose focus."
+            ),
+        },
+        {
+            "front": "Differentiate",
+            "ipa": "/ˌdɪf.əˈren.ʃi.eɪt/",
+            "pos": "Verb",
+            "back": "Phân biệt / Nhận dạng sự khác biệt",
+            "example": (
+                "It is critical to differentiate between opinion and fact."
+            ),
+        },
+        {
+            "front": "Implementation",
+            "ipa": "/ˌɪm.plɪ.menˈteɪ.ʃən/",
+            "pos": "Noun",
+            "back": "Sự thực thi / Triển khai áp dụng",
+            "example": (
+                "The successful implementation of policy requires funding."
+            ),
+        },
+        {
+            "front": "Inevitably",
+            "ipa": "/ɪnˈev.ɪ.tə.bli/",
+            "pos": "Adverb",
+            "back": "Tất yếu / Không thể tránh khỏi",
+            "example": "Rapid industrial development inevitably leads to waste.",
+        },
+        {
+            "front": "Predominantly",
+            "ipa": "/prɪˈdɒm.ɪ.nənt.li/",
+            "pos": "Adverb",
+            "back": "Phần lớn / Chủ yếu",
+            "example": "The city population is predominantly young professionals.",
+        },
+        {
+            "front": "Subsequent",
+            "ipa": "/ˈsʌb.sɪ.kwənt/",
+            "pos": "Adjective",
+            "back": "Xảy ra sau đó / Theo sau",
+            "example": "Subsequent studies supported the original findings.",
+        },
+    ],
+}
 
 
 def get_vocab_data():
-  # Nếu file chưa tồn tại hoặc dữ liệu bị thiếu, tự động cào trực tiếp kho AWL
-  if not os.path.exists(DATA_FILE):
-    download_awl_data()
-
-  try:
-    with open(DATA_FILE, "r", encoding="utf-8") as f:
-      data = json.load(f)
-      # Kiểm tra nếu dữ liệu quá ít (dưới 30 từ), tự nạp lại dữ liệu đầy đủ
-      total_words = sum(len(v) for v in data.values())
-      if total_words < 50:
-        return download_awl_data()
-      return data
-  except Exception:
-    return download_awl_data()
-
-
-def download_awl_data():
-  url = "https://raw.githubusercontent.com/datasets/academic-word-list/master/data/words.json"
-  try:
-    req = urllib.request.Request(
-        url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
-    )
-    with urllib.request.urlopen(req) as response:
-      raw_data = json.loads(response.read().decode("utf-8"))
-
-      band_1 = []
-      band_2 = []
-      band_3 = []
-
-      for item in raw_data:
-        word = item.get("word", "").strip()
-        sublist = item.get("sublist", 1)
-        if not word or len(word) < 2:
-          continue
-
-        entry = {
-            "front": word.capitalize(),
-            "back": f"Từ vựng học thuật nhóm AWL Sublist {sublist}",
-            "ipa": f"/{word.lower()}/",
-            "pos": "Academic",
-            "example": (
-                f"The academic word '{word}' frequently appears in reading and"
-                " writing tasks."
-            ),
-        }
-
-        if sublist <= 3:
-          band_1.append(entry)
-        elif sublist <= 6:
-          band_2.append(entry)
-        else:
-          band_3.append(entry)
-
-      dataset = {
-          "IELTS Band 4.0 - 5.0 (Cơ bản)": band_1,
-          "IELTS Band 5.5 - 6.5 (Khá/Tốt)": band_2,
-          "IELTS Band 7.0+ (Nâng cao)": band_3,
-      }
-
-      with open(DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(dataset, f, ensure_ascii=False, indent=2)
-
-      return dataset
-  except Exception as e:
-    print(f"Lỗi nạp dữ liệu: {e}")
-    return {}
+  DATA_FILE = "flashcards_data.json"
+  if os.path.exists(DATA_FILE):
+    try:
+      with open(DATA_FILE, "r", encoding="utf-8") as f:
+        data = json.load(f)
+        if data and sum(len(v) for v in data.values()) > 0:
+          return data
+    except Exception:
+      pass
+  return DEFAULT_VOCAB_DATA
 
 
 HTML_TEMPLATE = """
